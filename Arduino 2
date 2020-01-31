@@ -1,0 +1,68 @@
+#include "NewPing.h"
+
+#define MAX_DISTANCE 400
+
+#define TRIGGER_PIN 5
+#define ECHO_PIN 6
+
+#define TRIGGER_PIN1 8
+#define ECHO_PIN1 7
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+NewPing sonar1(TRIGGER_PIN1, ECHO_PIN1, MAX_DISTANCE);
+
+float duration, duration1, distance, distance1;
+int iterations = 5;
+int plekID = 0;
+int ID = 0;
+int verdieping = 0;
+int grens = 20;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+
+  pinMode(9, OUTPUT); //rood
+  pinMode(10, OUTPUT); //blauw
+  pinMode(11, OUTPUT); //groen
+  pinMode(3, OUTPUT); //rood
+  pinMode(4, OUTPUT); //blauw
+  pinMode(12, OUTPUT); //groen
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  duration = sonar.ping_median(iterations);
+  duration1 = sonar1.ping_median(iterations);
+  
+  distance = (duration / 2) * 0.0343;
+  distance1 = (duration1 / 2) * 0.0343;
+
+  if (distance >= grens){
+    Serial.write("3,0");
+    digitalWrite(11, LOW);
+    digitalWrite(10, HIGH);
+    digitalWrite(9, LOW);
+    delay(500);
+  }else{
+    Serial.write("3,1");
+    digitalWrite(11, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(9, HIGH);
+    delay(500);
+  }
+  if (distance1 >= grens){
+    Serial.write("4,0");
+    digitalWrite(12, HIGH);
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    delay(500);
+  }else{
+    Serial.write("4 ,1");
+    digitalWrite(12, LOW);
+    digitalWrite(2, HIGH);
+    digitalWrite(3, LOW);
+    delay(500);
+  }
+  delay(500);
+}
